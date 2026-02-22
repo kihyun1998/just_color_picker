@@ -1,39 +1,80 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# just_color_picker
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+A customizable HSV color picker for Flutter with a circular hue wheel, saturation-value panel, alpha slider, and HEX input field. Zero external dependencies — built entirely with `CustomPainter`.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+- Circular **Hue Wheel** with embedded **SV (Saturation-Value) Panel**
+- **Alpha Slider** with checkerboard transparency background
+- **HEX Input** field with bidirectional sync
+- **HEX / RGB** color info display
+- Uncontrolled and controlled modes
+- Fully customizable sizes and visibility toggles
 
-## Getting started
+## Getting Started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Add the dependency:
+
+```yaml
+dependencies:
+  just_color_picker: ^0.1.0
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
 ```dart
-const like = 'sample';
+import 'package:just_color_picker/just_color_picker.dart';
+
+JustColorPicker(
+  initialColor: Colors.blue,
+  onColorChanged: (Color color) {
+    // Called continuously during drag
+  },
+  onColorChangeEnd: (Color color) {
+    // Called when drag ends
+  },
+)
 ```
 
-## Additional information
+### Controlled Mode
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+```dart
+JustColorPicker(
+  color: myColor,          // externally managed
+  onColorChanged: (color) {
+    setState(() => myColor = color);
+  },
+)
+```
+
+### Customization
+
+```dart
+JustColorPicker(
+  initialColor: Colors.red,
+  onColorChanged: (color) {},
+  wheelDiameter: 300,      // wheel size
+  wheelWidth: 30,           // ring thickness
+  thumbRadius: 10,          // indicator size
+  showAlpha: true,          // alpha slider
+  showHexInput: true,       // HEX text field
+  showColorInfo: true,      // HEX/RGB display
+  showPreview: true,        // color swatch
+)
+```
+
+## API
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `initialColor` | `Color?` | — | Initial color (uncontrolled mode) |
+| `color` | `Color?` | — | Controlled color |
+| `onColorChanged` | `ValueChanged<Color>` | **required** | Real-time color callback |
+| `onColorChangeEnd` | `ValueChanged<Color>?` | `null` | Gesture-end callback |
+| `wheelDiameter` | `double` | `280.0` | Wheel diameter |
+| `wheelWidth` | `double` | `26.0` | Ring thickness |
+| `showAlpha` | `bool` | `true` | Show alpha slider |
+| `showHexInput` | `bool` | `true` | Show HEX input |
+| `showColorInfo` | `bool` | `true` | Show color info |
+| `showPreview` | `bool` | `true` | Show preview swatch |
+| `thumbRadius` | `double` | `8.0` | Thumb indicator radius |
