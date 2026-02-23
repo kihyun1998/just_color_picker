@@ -1,5 +1,7 @@
 import 'package:flutter/rendering.dart';
 
+import 'paint_utils.dart';
+
 /// Paints the Saturation–Value rectangle with a thumb indicator.
 ///
 /// The panel uses two overlapping linear gradients:
@@ -51,41 +53,12 @@ class SvPanelPainter extends CustomPainter {
     );
 
     // Draw thumb.
-    final thumbX = saturation * size.width;
-    final thumbY = (1.0 - value) * size.height;
-    final thumbCenter = Offset(thumbX, thumbY);
-
-    // White outer ring.
-    canvas.drawCircle(
-      thumbCenter,
-      thumbRadius + 2,
-      Paint()
-        ..color = const Color(0xFFFFFFFF)
-        ..style = PaintingStyle.fill,
+    final thumbCenter = Offset(
+      saturation * size.width,
+      (1.0 - value) * size.height,
     );
-    // Subtle shadow border.
-    canvas.drawCircle(
-      thumbCenter,
-      thumbRadius + 2,
-      Paint()
-        ..color = const Color(0x33000000)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.0,
-    );
-    // Fill with actual color.
-    final currentColor = HSVColor.fromAHSV(
-      1.0,
-      hue,
-      saturation,
-      value,
-    ).toColor();
-    canvas.drawCircle(
-      thumbCenter,
-      thumbRadius,
-      Paint()
-        ..color = currentColor
-        ..style = PaintingStyle.fill,
-    );
+    final thumbColor = HSVColor.fromAHSV(1.0, hue, saturation, value).toColor();
+    paintThumb(canvas, thumbCenter, thumbRadius, thumbColor);
   }
 
   @override

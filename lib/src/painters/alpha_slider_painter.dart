@@ -1,6 +1,7 @@
 import 'package:flutter/rendering.dart';
 
 import 'checkerboard_painter.dart';
+import 'paint_utils.dart';
 
 /// Paints a horizontal alpha slider with a checkerboard background,
 /// a color gradient overlay, and a thumb indicator.
@@ -53,28 +54,11 @@ class AlphaSliderPainter extends CustomPainter {
     // 4) Thumb.
     final thumbX = alpha * size.width;
     final thumbCenter = Offset(thumbX.clamp(0.0, size.width), size.height / 2);
-
-    canvas.drawCircle(
-      thumbCenter,
-      thumbRadius + 2,
-      Paint()
-        ..color = const Color(0xFFFFFFFF)
-        ..style = PaintingStyle.fill,
-    );
-    canvas.drawCircle(
-      thumbCenter,
-      thumbRadius + 2,
-      Paint()
-        ..color = const Color(0x33000000)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.0,
-    );
-    canvas.drawCircle(
+    paintThumb(
+      canvas,
       thumbCenter,
       thumbRadius,
-      Paint()
-        ..color = color.withValues(alpha: alpha)
-        ..style = PaintingStyle.fill,
+      color.withValues(alpha: alpha),
     );
   }
 

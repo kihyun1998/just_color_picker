@@ -3,7 +3,7 @@ import 'package:example/main.dart';
 
 void main() {
   testWidgets('Example app renders', (WidgetTester tester) async {
-    await tester.pumpWidget(const ExampleApp());
-    expect(find.text('Just Color Picker'), findsOneWidget);
+    await tester.pumpWidget(const PlaygroundApp());
+    expect(find.text('JustColorPicker Playground'), findsOneWidget);
   });
 }

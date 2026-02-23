@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 
+import '../models/color_picker_type.dart';
 import '../models/color_state.dart';
 import 'alpha_slider.dart';
 import 'color_info_panel.dart';
 import 'color_preview.dart';
 import 'hex_input.dart';
+import 'hue_bar.dart';
 import 'hue_wheel.dart';
+import 'sv_panel.dart';
 
 /// A complete HSV color picker with a circular hue wheel, SV panel,
 /// optional alpha slider, HEX input, and color info display.
 ///
 /// Supports both **uncontrolled** mode (via [initialColor]) and
 /// **controlled** mode (via [color]).
+///
+/// Use [type] to switch between the circular [ColorPickerType.wheel] layout
+/// and the linear [ColorPickerType.bar] layout.
 class JustColorPicker extends StatefulWidget {
   const JustColorPicker({
     super.key,
@@ -19,6 +25,7 @@ class JustColorPicker extends StatefulWidget {
     this.color,
     required this.onColorChanged,
     this.onColorChangeEnd,
+    this.type = ColorPickerType.wheel,
     this.wheelDiameter = 280.0,
     this.wheelWidth = 26.0,
     this.showAlpha = true,
@@ -44,7 +51,11 @@ class JustColorPicker extends StatefulWidget {
   /// Called when the user finishes a drag gesture.
   final ValueChanged<Color>? onColorChangeEnd;
 
+  /// The layout style of the picker.
+  final ColorPickerType type;
+
   /// Diameter of the hue wheel in logical pixels.
+  /// In [ColorPickerType.bar] mode this controls the size of the SV panel.
   final double wheelDiameter;
 
   /// Thickness of the hue ring.
@@ -101,39 +112,75 @@ class _JustColorPickerState extends State<JustColorPicker> {
     widget.onColorChangeEnd?.call(_state.toColor());
   }
 
+  Widget _buildWheel() {
+    return HueWheel(
+      hue: _state.hue,
+      saturation: _state.saturation,
+      value: _state.value,
+      wheelDiameter: widget.wheelDiameter,
+      wheelWidth: widget.wheelWidth,
+      thumbRadius: widget.thumbRadius,
+      onHueChanged: (hue) => _updateState(_state.withHue(hue)),
+      onSVChanged: (s, v) => _updateState(_state.withSV(s, v)),
+      onChangeEnd: _notifyEnd,
+    );
+  }
+
+  Widget _buildBar() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // SV panel (square, size = wheelDiameter).
+        SizedBox(
+          width: widget.wheelDiameter,
+          height: widget.wheelDiameter,
+          child: SvPanel(
+            hue: _state.hue,
+            saturation: _state.saturation,
+            value: _state.value,
+            thumbRadius: widget.thumbRadius,
+            onChanged: (s, v) => _updateState(_state.withSV(s, v)),
+            onChangeEnd: _notifyEnd,
+          ),
+        ),
+        const SizedBox(height: 16),
+        // Hue bar.
+        SizedBox(
+          width: widget.wheelDiameter,
+          height: widget.thumbRadius * 2 + 12,
+          child: HueBar(
+            hue: _state.hue,
+            thumbRadius: widget.thumbRadius,
+            onChanged: (hue) => _updateState(_state.withHue(hue)),
+            onChangeEnd: _notifyEnd,
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final color = _state.toColor();
+    final isBar = widget.type == ColorPickerType.bar;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Hue wheel + SV panel.
-        HueWheel(
-          hue: _state.hue,
-          saturation: _state.saturation,
-          value: _state.value,
-          wheelDiameter: widget.wheelDiameter,
-          wheelWidth: widget.wheelWidth,
-          thumbRadius: widget.thumbRadius,
-          onHueChanged: (hue) => _updateState(_state.withHue(hue)),
-          onSVChanged: (s, v) => _updateState(_state.withSV(s, v)),
-          onChangeEnd: _notifyEnd,
-        ),
+        // Hue selector + SV panel.
+        if (isBar) _buildBar() else _buildWheel(),
 
         // Alpha slider.
         if (widget.showAlpha) ...[
           const SizedBox(height: 16),
           Padding(
             padding: EdgeInsets.symmetric(
-              horizontal:
-                  (widget.wheelDiameter -
-                      widget.wheelDiameter +
-                      widget.wheelWidth) /
-                  2,
+              horizontal: isBar ? 0 : widget.wheelWidth / 2,
             ),
             child: SizedBox(
-              width: widget.wheelDiameter - widget.wheelWidth,
+              width: isBar
+                  ? widget.wheelDiameter
+                  : widget.wheelDiameter - widget.wheelWidth,
               height: widget.thumbRadius * 2 + 12,
               child: AlphaSlider(
                 color: HSVColor.fromAHSV(
@@ -157,7 +204,9 @@ class _JustColorPickerState extends State<JustColorPicker> {
             widget.showColorInfo) ...[
           const SizedBox(height: 16),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: widget.wheelWidth / 2),
+            padding: EdgeInsets.symmetric(
+              horizontal: isBar ? 0 : widget.wheelWidth / 2,
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

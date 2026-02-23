@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/rendering.dart';
 
 import '../utils/math_utils.dart';
+import 'paint_utils.dart';
 
 /// Paints a circular hue ring using [SweepGradient] and a thumb indicator.
 class HueWheelPainter extends CustomPainter {
@@ -21,16 +22,6 @@ class HueWheelPainter extends CustomPainter {
   /// Radius of the thumb indicator.
   final double thumbRadius;
 
-  static const List<Color> _hueColors = [
-    Color(0xFFFF0000), // 0°   Red
-    Color(0xFFFFFF00), // 60°  Yellow
-    Color(0xFF00FF00), // 120° Green
-    Color(0xFF00FFFF), // 180° Cyan
-    Color(0xFF0000FF), // 240° Blue
-    Color(0xFFFF00FF), // 300° Magenta
-    Color(0xFFFF0000), // 360° Red (wrap)
-  ];
-
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
@@ -43,7 +34,7 @@ class HueWheelPainter extends CustomPainter {
     // matching our coordinate system (top = 0°, clockwise).
     final ringPaint = Paint()
       ..shader = SweepGradient(
-        colors: _hueColors,
+        colors: kHueColors,
         transform: const GradientRotation(-math.pi / 2),
       ).createShader(Rect.fromCircle(center: center, radius: outerRadius))
       ..style = PaintingStyle.stroke
@@ -54,32 +45,8 @@ class HueWheelPainter extends CustomPainter {
 
     // Draw thumb.
     final thumbCenter = hueToOffset(hue, ringRadius, center);
-
-    // Outer border (white).
-    canvas.drawCircle(
-      thumbCenter,
-      thumbRadius + 2,
-      Paint()
-        ..color = const Color(0xFFFFFFFF)
-        ..style = PaintingStyle.fill,
-    );
-    // Dark border.
-    canvas.drawCircle(
-      thumbCenter,
-      thumbRadius + 2,
-      Paint()
-        ..color = const Color(0x33000000)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.0,
-    );
-    // Fill with the hue color.
-    canvas.drawCircle(
-      thumbCenter,
-      thumbRadius,
-      Paint()
-        ..color = HSVColor.fromAHSV(1.0, hue, 1.0, 1.0).toColor()
-        ..style = PaintingStyle.fill,
-    );
+    final thumbColor = HSVColor.fromAHSV(1.0, hue, 1.0, 1.0).toColor();
+    paintThumb(canvas, thumbCenter, thumbRadius, thumbColor);
   }
 
   @override

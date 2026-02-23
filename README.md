@@ -4,7 +4,9 @@ A customizable HSV color picker for Flutter with a circular hue wheel, saturatio
 
 ## Features
 
+- **Two layout styles** — circular `wheel` or linear `bar`, switchable via `ColorPickerType`
 - Circular **Hue Wheel** with embedded **SV (Saturation-Value) Panel**
+- Linear **Hue Bar** with standalone square **SV Panel**
 - **Alpha Slider** with checkerboard transparency background
 - **HEX Input** field with bidirectional sync
 - **HEX / RGB** color info display
@@ -17,10 +19,12 @@ Add the dependency:
 
 ```yaml
 dependencies:
-  just_color_picker: ^0.1.0
+  just_color_picker: ^0.2.0
 ```
 
 ## Usage
+
+### Wheel Mode (default)
 
 ```dart
 import 'package:just_color_picker/just_color_picker.dart';
@@ -33,6 +37,16 @@ JustColorPicker(
   onColorChangeEnd: (Color color) {
     // Called when drag ends
   },
+)
+```
+
+### Bar Mode
+
+```dart
+JustColorPicker(
+  type: ColorPickerType.bar,
+  initialColor: Colors.blue,
+  onColorChanged: (color) {},
 )
 ```
 
@@ -53,17 +67,30 @@ JustColorPicker(
 JustColorPicker(
   initialColor: Colors.red,
   onColorChanged: (color) {},
-  wheelDiameter: 300,      // wheel size
-  wheelWidth: 30,           // ring thickness
-  thumbRadius: 10,          // indicator size
-  showAlpha: true,          // alpha slider
-  showHexInput: true,       // HEX text field
-  showColorInfo: true,      // HEX/RGB display
-  showPreview: true,        // color swatch
+  type: ColorPickerType.wheel, // wheel or bar
+  wheelDiameter: 300,          // wheel / SV panel size
+  wheelWidth: 30,              // ring thickness (wheel mode)
+  thumbRadius: 10,             // indicator size
+  showAlpha: true,             // alpha slider
+  showHexInput: true,          // HEX text field
+  showColorInfo: true,         // HEX/RGB display
+  showPreview: true,           // color swatch
 )
 ```
 
+## Picker Types
+
+### `ColorPickerType.wheel`
+
+Circular hue ring with a saturation-value panel inscribed inside. Classic HSV wheel layout.
+
+### `ColorPickerType.bar`
+
+Square SV panel on top with a horizontal hue bar below it. Compact linear layout.
+
 ## API
+
+### JustColorPicker
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
@@ -71,10 +98,41 @@ JustColorPicker(
 | `color` | `Color?` | — | Controlled color |
 | `onColorChanged` | `ValueChanged<Color>` | **required** | Real-time color callback |
 | `onColorChangeEnd` | `ValueChanged<Color>?` | `null` | Gesture-end callback |
-| `wheelDiameter` | `double` | `280.0` | Wheel diameter |
-| `wheelWidth` | `double` | `26.0` | Ring thickness |
+| `type` | `ColorPickerType` | `wheel` | Layout style (`wheel` or `bar`) |
+| `wheelDiameter` | `double` | `280.0` | Wheel diameter / SV panel size |
+| `wheelWidth` | `double` | `26.0` | Ring thickness (wheel mode only) |
 | `showAlpha` | `bool` | `true` | Show alpha slider |
 | `showHexInput` | `bool` | `true` | Show HEX input |
 | `showColorInfo` | `bool` | `true` | Show color info |
 | `showPreview` | `bool` | `true` | Show preview swatch |
 | `thumbRadius` | `double` | `8.0` | Thumb indicator radius |
+
+### ColorPickerType
+
+| Value | Description |
+|-------|-------------|
+| `wheel` | Circular hue ring with embedded SV panel (default) |
+| `bar` | Horizontal hue bar with square SV panel |
+
+### Standalone Widgets
+
+These widgets are also exported for custom layouts:
+
+| Widget | Description |
+|--------|-------------|
+| `HueWheel` | Circular hue ring with embedded SV panel |
+| `HueBar` | Horizontal hue spectrum slider |
+| `SvPanel` | Saturation-value rectangle |
+| `AlphaSlider` | Opacity slider with checkerboard background |
+| `HexInput` | HEX color code text field |
+| `ColorPreview` | Color swatch with checkerboard background |
+| `ColorInfoPanel` | HEX / RGB value display |
+
+## Example
+
+The `example/` directory contains an interactive playground app where you can toggle all options in real time. Run it with:
+
+```bash
+cd example
+flutter run
+```
