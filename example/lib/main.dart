@@ -37,9 +37,102 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   bool _showHexInput = true;
   bool _showColorInfo = true;
   bool _showPreview = true;
+  bool _showRgbInput = false;
+  bool _showHslInput = false;
   double _wheelDiameter = 280;
   double _wheelWidth = 26;
   double _thumbRadius = 8;
+
+  // Input theme preset.
+  String _themePreset = 'default';
+
+  ColorPickerInputThemeData? get _inputTheme {
+    switch (_themePreset) {
+      case 'rounded':
+        return const ColorPickerInputThemeData(
+          textStyle: TextStyle(fontSize: 13, fontFamily: 'monospace'),
+          labelStyle: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF5C6BC0),
+          ),
+          decoration: InputDecoration(
+            isDense: true,
+            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderSide: BorderSide(color: Color(0xFFB0BEC5)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderSide: BorderSide(color: Color(0xFF5C6BC0), width: 2),
+            ),
+          ),
+          cursorColor: Color(0xFF5C6BC0),
+          labelSpacing: 4,
+        );
+      case 'minimal':
+        return const ColorPickerInputThemeData(
+          textStyle: TextStyle(fontSize: 14, fontFamily: 'monospace'),
+          labelStyle: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            color: Color(0xFF9E9E9E),
+          ),
+          decoration: InputDecoration(
+            isDense: true,
+            contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            border: UnderlineInputBorder(),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Color(0xFF424242), width: 2),
+            ),
+          ),
+          cursorColor: Color(0xFF424242),
+          labelSpacing: 2,
+        );
+      case 'bold':
+        return const ColorPickerInputThemeData(
+          textStyle: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            fontFamily: 'monospace',
+          ),
+          labelStyle: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
+            color: Color(0xFFE65100),
+          ),
+          decoration: InputDecoration(
+            isDense: true,
+            filled: true,
+            fillColor: Color(0xFFFFF3E0),
+            contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(6)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(6)),
+              borderSide: BorderSide(color: Color(0xFFFFCC80), width: 2),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(6)),
+              borderSide: BorderSide(color: Color(0xFFE65100), width: 2),
+            ),
+          ),
+          cursorColor: Color(0xFFE65100),
+          labelSpacing: 4,
+          fieldWidth: 58,
+        );
+      default:
+        return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +187,10 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           showHexInput: _showHexInput,
           showColorInfo: _showColorInfo,
           showPreview: _showPreview,
+          showRgbInput: _showRgbInput,
+          showHslInput: _showHslInput,
           thumbRadius: _thumbRadius,
+          inputTheme: _inputTheme,
         ),
         const SizedBox(height: 24),
         // Color preview box.
@@ -163,8 +259,31 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
             _buildSwitch('showPreview', _showPreview, (v) {
               setState(() => _showPreview = v);
             }),
+            _buildSwitch('showRgbInput', _showRgbInput, (v) {
+              setState(() => _showRgbInput = v);
+            }),
+            _buildSwitch('showHslInput', _showHslInput, (v) {
+              setState(() => _showHslInput = v);
+            }),
 
             const SizedBox(height: 8),
+            const Divider(),
+            const SizedBox(height: 8),
+
+            // Input theme preset.
+            Text('Input Theme', style: Theme.of(context).textTheme.labelLarge),
+            const SizedBox(height: 8),
+            SegmentedButton<String>(
+              segments: const [
+                ButtonSegment(value: 'default', label: Text('Default')),
+                ButtonSegment(value: 'rounded', label: Text('Rounded')),
+                ButtonSegment(value: 'minimal', label: Text('Minimal')),
+                ButtonSegment(value: 'bold', label: Text('Bold')),
+              ],
+              selected: {_themePreset},
+              onSelectionChanged: (v) => setState(() => _themePreset = v.first),
+            ),
+            const SizedBox(height: 16),
             const Divider(),
             const SizedBox(height: 8),
 

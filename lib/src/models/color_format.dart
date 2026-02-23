@@ -1,5 +1,7 @@
 import 'dart:ui' show Color;
 
+import '../utils/color_conversions.dart';
+
 /// Interface for formatting a [Color] as a human-readable string.
 abstract class ColorFormat {
   const ColorFormat();
@@ -54,5 +56,28 @@ class RgbColorFormat extends ColorFormat {
       return 'rgba(${_r(color)}, ${_g(color)}, ${_b(color)}, $a)';
     }
     return 'rgb(${_r(color)}, ${_g(color)}, ${_b(color)})';
+  }
+}
+
+/// Formats a [Color] as an HSL string (e.g. `hsl(210, 65%, 47%)`).
+class HslColorFormat extends ColorFormat {
+  const HslColorFormat({this.includeAlpha = false});
+
+  final bool includeAlpha;
+
+  @override
+  String get label => includeAlpha ? 'HSLA' : 'HSL';
+
+  @override
+  String format(Color color) {
+    final hsl = colorToHsl(color);
+    final h = hsl.h.round();
+    final s = hsl.s.round();
+    final l = hsl.l.round();
+    if (includeAlpha) {
+      final a = color.a.toStringAsFixed(2);
+      return 'hsla($h, $s%, $l%, $a)';
+    }
+    return 'hsl($h, $s%, $l%)';
   }
 }

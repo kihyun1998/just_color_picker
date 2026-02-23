@@ -1,6 +1,6 @@
 # just_color_picker
 
-A customizable HSV color picker for Flutter with a circular hue wheel, saturation-value panel, alpha slider, and HEX input field. Zero external dependencies — built entirely with `CustomPainter`.
+A customizable HSV color picker for Flutter with a circular hue wheel, saturation-value panel, alpha slider, HEX/RGB/HSL input fields, and a themeable input system. Zero external dependencies — built entirely with `CustomPainter`.
 
 ## Features
 
@@ -8,8 +8,9 @@ A customizable HSV color picker for Flutter with a circular hue wheel, saturatio
 - Circular **Hue Wheel** with embedded **SV (Saturation-Value) Panel**
 - Linear **Hue Bar** with standalone square **SV Panel**
 - **Alpha Slider** with checkerboard transparency background
-- **HEX Input** field with bidirectional sync
-- **HEX / RGB** color info display
+- **HEX / RGB / HSL Input** fields with bidirectional sync
+- **HEX / RGB / HSL** color info display
+- **Input theme system** — customize text style, label style, decoration, cursor color, spacing, and field width via `ColorPickerInputThemeData`
 - Uncontrolled and controlled modes
 - Fully customizable sizes and visibility toggles
 
@@ -19,7 +20,7 @@ Add the dependency:
 
 ```yaml
 dependencies:
-  just_color_picker: ^0.2.0
+  just_color_picker: ^0.3.0
 ```
 
 ## Usage
@@ -105,7 +106,10 @@ Square SV panel on top with a horizontal hue bar below it. Compact linear layout
 | `showHexInput` | `bool` | `true` | Show HEX input |
 | `showColorInfo` | `bool` | `true` | Show color info |
 | `showPreview` | `bool` | `true` | Show preview swatch |
+| `showRgbInput` | `bool` | `false` | Show RGB input fields |
+| `showHslInput` | `bool` | `false` | Show HSL input fields |
 | `thumbRadius` | `double` | `8.0` | Thumb indicator radius |
+| `inputTheme` | `ColorPickerInputThemeData?` | `null` | Theme for all input fields |
 
 ### ColorPickerType
 
@@ -125,8 +129,11 @@ These widgets are also exported for custom layouts:
 | `SvPanel` | Saturation-value rectangle |
 | `AlphaSlider` | Opacity slider with checkerboard background |
 | `HexInput` | HEX color code text field |
+| `RgbInput` | R/G/B/A individual input fields (0–255) |
+| `HslInput` | H/S/L/A individual input fields |
+| `ColorTextField` | Reusable base input component |
 | `ColorPreview` | Color swatch with checkerboard background |
-| `ColorInfoPanel` | HEX / RGB value display |
+| `ColorInfoPanel` | HEX / RGB / HSL value display |
 
 ## Example
 

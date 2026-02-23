@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../models/color_picker_input_theme.dart';
 import '../utils/color_conversions.dart';
+import 'color_text_field.dart';
 
 /// A text field for entering a HEX color code.
 ///
@@ -13,6 +15,7 @@ class HexInput extends StatefulWidget {
     required this.color,
     required this.onColorChanged,
     this.showAlpha = false,
+    this.theme,
   });
 
   /// Current color to display.
@@ -24,89 +27,43 @@ class HexInput extends StatefulWidget {
   /// Whether to show alpha in the HEX string.
   final bool showAlpha;
 
+  /// Optional theme for styling the input field.
+  final ColorPickerInputThemeData? theme;
+
   @override
   State<HexInput> createState() => _HexInputState();
 }
 
 class _HexInputState extends State<HexInput> {
-  late final TextEditingController _controller;
-  bool _isEditing = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(
-      text: colorToHex(widget.color, includeAlpha: widget.showAlpha),
-    );
-  }
-
-  @override
-  void didUpdateWidget(HexInput oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Only update the text field if the color changed externally (not from user input).
-    if (!_isEditing && widget.color != oldWidget.color) {
-      final hex = colorToHex(widget.color, includeAlpha: widget.showAlpha);
-      _controller.text = hex;
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  int _revertCount = 0;
 
   void _onSubmitted(String text) {
-    _isEditing = false;
     final color = hexToColor(text);
     if (color != null) {
       widget.onColorChanged(color);
     } else {
-      // Revert to current color on invalid input.
-      _controller.text = colorToHex(
-        widget.color,
-        includeAlpha: widget.showAlpha,
-      );
+      // Force revert on invalid input.
+      setState(() => _revertCount++);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final maxLength = widget.showAlpha ? 8 : 6;
+    final defaultWidth = widget.showAlpha ? 120.0 : 100.0;
+    final width = widget.theme?.fieldWidth ?? defaultWidth;
+
     return SizedBox(
-      width: widget.showAlpha ? 120 : 100,
-      child: Row(
-        children: [
-          const Text(
-            '#',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF666666),
-            ),
-          ),
-          const SizedBox(width: 2),
-          Expanded(
-            child: TextField(
-              controller: _controller,
-              style: const TextStyle(fontSize: 14, fontFamily: 'monospace'),
-              decoration: const InputDecoration(
-                isDense: true,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 8,
-                ),
-                border: OutlineInputBorder(),
-              ),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp('[0-9a-fA-F]')),
-                LengthLimitingTextInputFormatter(maxLength),
-              ],
-              onTap: () => _isEditing = true,
-              onSubmitted: _onSubmitted,
-              onEditingComplete: () => _onSubmitted(_controller.text),
-            ),
-          ),
+      width: width + 16, // account for label + spacing
+      child: ColorTextField(
+        value: colorToHex(widget.color, includeAlpha: widget.showAlpha),
+        label: '#',
+        theme: widget.theme,
+        revisionKey: _revertCount,
+        onSubmitted: _onSubmitted,
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp('[0-9a-fA-F]')),
+          LengthLimitingTextInputFormatter(maxLength),
         ],
       ),
     );

@@ -1,6 +1,6 @@
 name: just_color_picker
 description: A customizable HSV color picker with circular hue wheel, saturation-value panel, alpha slider, and HEX input. No external dependencies.
-version: 0.2.0
+version: 0.3.0
 homepage: https://github.com/kihyun1998/just_color_picker
 repository: https://github.com/kihyun1998/just_color_picker
 issue_tracker: https://github.com/kihyun1998/just_color_picker/issues

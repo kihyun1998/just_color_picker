@@ -59,3 +59,74 @@ String colorToHex(Color color, {bool includeAlpha = false}) {
 
 /// Returns `true` if [hex] is a valid HEX color string.
 bool isValidHex(String hex) => hexToColor(hex) != null;
+
+/// Converts HSL values to a [Color].
+///
+/// - [h]: hue, 0–360
+/// - [s]: saturation, 0–100
+/// - [l]: lightness, 0–100
+/// - [alpha]: opacity, 0–255 (default 255 = fully opaque)
+Color hslToColor(double h, double s, double l, [int alpha = 255]) {
+  final hNorm = (h % 360) / 360.0;
+  final sNorm = s / 100.0;
+  final lNorm = l / 100.0;
+
+  double hueToRgb(double p, double q, double t) {
+    var tt = t;
+    if (tt < 0) tt += 1;
+    if (tt > 1) tt -= 1;
+    if (tt < 1 / 6) return p + (q - p) * 6 * tt;
+    if (tt < 1 / 2) return q;
+    if (tt < 2 / 3) return p + (q - p) * (2 / 3 - tt) * 6;
+    return p;
+  }
+
+  double r, g, b;
+  if (sNorm == 0) {
+    r = g = b = lNorm;
+  } else {
+    final q = lNorm < 0.5 ? lNorm * (1 + sNorm) : lNorm + sNorm - lNorm * sNorm;
+    final p = 2 * lNorm - q;
+    r = hueToRgb(p, q, hNorm + 1 / 3);
+    g = hueToRgb(p, q, hNorm);
+    b = hueToRgb(p, q, hNorm - 1 / 3);
+  }
+
+  return Color.from(alpha: alpha / 255.0, red: r, green: g, blue: b);
+}
+
+/// Converts a [Color] to HSL components.
+///
+/// Returns a record with:
+/// - `h`: hue, 0–360
+/// - `s`: saturation, 0–100
+/// - `l`: lightness, 0–100
+({double h, double s, double l}) colorToHsl(Color color) {
+  final r = color.r;
+  final g = color.g;
+  final b = color.b;
+
+  final cMax = [r, g, b].reduce((a, b) => a > b ? a : b);
+  final cMin = [r, g, b].reduce((a, b) => a < b ? a : b);
+  final delta = cMax - cMin;
+
+  final l = (cMax + cMin) / 2;
+
+  double h, s;
+  if (delta == 0) {
+    h = 0;
+    s = 0;
+  } else {
+    s = l > 0.5 ? delta / (2 - cMax - cMin) : delta / (cMax + cMin);
+
+    if (cMax == r) {
+      h = ((g - b) / delta + (g < b ? 6 : 0)) * 60;
+    } else if (cMax == g) {
+      h = ((b - r) / delta + 2) * 60;
+    } else {
+      h = ((r - g) / delta + 4) * 60;
+    }
+  }
+
+  return (h: h, s: s * 100, l: l * 100);
+}

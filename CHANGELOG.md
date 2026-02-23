@@ -1,3 +1,16 @@
+## 0.3.0
+
+- **feat**: `RgbInput` widget — R/G/B/A individual input fields (0–255)
+- **feat**: `HslInput` widget — H/S/L/A individual input fields (H: 0–360, S/L: 0–100)
+- **feat**: `ColorTextField` — reusable base input component with bidirectional sync and revert mechanism
+- **feat**: `ColorPickerInputThemeData` — theme system for styling all input fields (text style, label style, decoration, cursor color, spacing, field width)
+- **feat**: `HslColorFormat` — format colors as `hsl(210, 65%, 47%)` strings
+- **feat**: `hslToColor()` / `colorToHsl()` conversion utilities
+- **feat**: `showRgbInput`, `showHslInput`, `inputTheme` parameters on `JustColorPicker`
+- **feat**: `showHsl`, `theme` parameters on `ColorInfoPanel`
+- **feat**: Input theme preset selector (Default / Rounded / Minimal / Bold) in playground example
+- **refactor**: `HexInput` now uses `ColorTextField` internally, accepts `theme` parameter
+
 ## 0.2.0
 
 - **feat**: `ColorPickerType` — switch between `wheel` (circular hue ring) and `bar` (linear hue bar + square SV panel) layouts via the `type` parameter
