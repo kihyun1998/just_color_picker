@@ -1,3 +1,13 @@
+## 0.4.0
+
+- **BREAKING**: Remove input widgets (`HexInput`, `RgbInput`, `HslInput`, `ColorTextField`) — the library now provides values and utilities instead of UI inputs
+- **BREAKING**: Remove `ColorPreview` and `ColorInfoPanel` widgets
+- **BREAKING**: Remove `ColorPickerInputThemeData` and `ColorFormat` models
+- **BREAKING**: Remove `showHexInput`, `showColorInfo`, `showPreview`, `showRgbInput`, `showHslInput`, `inputTheme` parameters from `JustColorPicker`
+- **BREAKING**: `colorToHsl()` now returns `({double h, double s, double l, int a})` (alpha added)
+- **feat**: `colorToRgb()` — convert Color to `({int r, int g, int b, int a})` record
+- **feat**: `rgbToColor()` — convert RGB components to Color
+
 ## 0.3.0
 
 - **feat**: `RgbInput` widget — R/G/B/A individual input fields (0–255)

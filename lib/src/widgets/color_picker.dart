@@ -1,20 +1,14 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
-import '../models/color_picker_input_theme.dart';
 import '../models/color_picker_type.dart';
 import '../models/color_state.dart';
 import 'alpha_slider.dart';
-import 'color_info_panel.dart';
-import 'color_preview.dart';
-import 'hex_input.dart';
-import 'hsl_input.dart';
 import 'hue_bar.dart';
 import 'hue_wheel.dart';
-import 'rgb_input.dart';
 import 'sv_panel.dart';
 
 /// A complete HSV color picker with a circular hue wheel, SV panel,
-/// optional alpha slider, HEX input, and color info display.
+/// and optional alpha slider.
 ///
 /// Supports both **uncontrolled** mode (via [initialColor]) and
 /// **controlled** mode (via [color]).
@@ -32,13 +26,7 @@ class JustColorPicker extends StatefulWidget {
     this.wheelDiameter = 280.0,
     this.wheelWidth = 26.0,
     this.showAlpha = true,
-    this.showHexInput = true,
-    this.showColorInfo = true,
-    this.showPreview = true,
-    this.showRgbInput = false,
-    this.showHslInput = false,
     this.thumbRadius = 8.0,
-    this.inputTheme,
   }) : assert(
          initialColor != null || color != null,
          'Either initialColor or color must be provided.',
@@ -70,26 +58,8 @@ class JustColorPicker extends StatefulWidget {
   /// Whether to show the alpha slider.
   final bool showAlpha;
 
-  /// Whether to show the HEX input field.
-  final bool showHexInput;
-
-  /// Whether to show the color info panel (HEX/RGB values).
-  final bool showColorInfo;
-
-  /// Whether to show the color preview swatch.
-  final bool showPreview;
-
-  /// Whether to show the RGB input fields.
-  final bool showRgbInput;
-
-  /// Whether to show the HSL input fields.
-  final bool showHslInput;
-
   /// Radius of thumb indicators.
   final double thumbRadius;
-
-  /// Theme for styling all input fields (HEX, RGB, HSL) and the info panel.
-  final ColorPickerInputThemeData? inputTheme;
 
   @override
   State<JustColorPicker> createState() => _JustColorPickerState();
@@ -125,10 +95,6 @@ class _JustColorPickerState extends State<JustColorPicker> {
 
   void _notifyEnd() {
     widget.onColorChangeEnd?.call(_state.toColor());
-  }
-
-  void _onInputColorChanged(Color c) {
-    _updateState(ColorState.fromColor(c));
   }
 
   Widget _buildWheel() {
@@ -180,10 +146,7 @@ class _JustColorPickerState extends State<JustColorPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final color = _state.toColor();
     final isBar = widget.type == ColorPickerType.bar;
-    final hasBottomRow =
-        widget.showPreview || widget.showHexInput || widget.showColorInfo;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -215,73 +178,6 @@ class _JustColorPickerState extends State<JustColorPicker> {
                 onChanged: (a) => _updateState(_state.withAlpha(a)),
                 onChangeEnd: _notifyEnd,
               ),
-            ),
-          ),
-        ],
-
-        // Bottom row: preview + hex input + info panel.
-        if (hasBottomRow) ...[
-          const SizedBox(height: 16),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: isBar ? 0 : widget.wheelWidth / 2,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (widget.showPreview) ...[
-                  ColorPreview(color: color, size: 40),
-                  const SizedBox(width: 12),
-                ],
-                if (widget.showHexInput) ...[
-                  HexInput(
-                    color: color,
-                    showAlpha: widget.showAlpha,
-                    theme: widget.inputTheme,
-                    onColorChanged: _onInputColorChanged,
-                  ),
-                  const SizedBox(width: 12),
-                ],
-                if (widget.showColorInfo)
-                  ColorInfoPanel(
-                    color: color,
-                    showAlpha: widget.showAlpha,
-                    showHsl: widget.showHslInput,
-                    theme: widget.inputTheme,
-                  ),
-              ],
-            ),
-          ),
-        ],
-
-        // RGB input row.
-        if (widget.showRgbInput) ...[
-          const SizedBox(height: 12),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: isBar ? 0 : widget.wheelWidth / 2,
-            ),
-            child: RgbInput(
-              color: color,
-              showAlpha: widget.showAlpha,
-              theme: widget.inputTheme,
-              onColorChanged: _onInputColorChanged,
-            ),
-          ),
-        ],
-
-        // HSL input row.
-        if (widget.showHslInput) ...[
-          const SizedBox(height: 12),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: isBar ? 0 : widget.wheelWidth / 2,
-            ),
-            child: HslInput(
-              color: color,
-              showAlpha: widget.showAlpha,
-              theme: widget.inputTheme,
-              onColorChanged: _onInputColorChanged,
             ),
           ),
         ],

@@ -1,6 +1,6 @@
 # just_color_picker
 
-A customizable HSV color picker for Flutter with a circular hue wheel, saturation-value panel, alpha slider, HEX/RGB/HSL input fields, and a themeable input system. Zero external dependencies — built entirely with `CustomPainter`.
+A customizable HSV color picker for Flutter with a circular hue wheel, saturation-value panel, alpha slider, and color conversion utilities. Zero external dependencies — built entirely with `CustomPainter`.
 
 ## Features
 
@@ -8,9 +8,7 @@ A customizable HSV color picker for Flutter with a circular hue wheel, saturatio
 - Circular **Hue Wheel** with embedded **SV (Saturation-Value) Panel**
 - Linear **Hue Bar** with standalone square **SV Panel**
 - **Alpha Slider** with checkerboard transparency background
-- **HEX / RGB / HSL Input** fields with bidirectional sync
-- **HEX / RGB / HSL** color info display
-- **Input theme system** — customize text style, label style, decoration, cursor color, spacing, and field width via `ColorPickerInputThemeData`
+- **Color conversion utilities** — HEX, RGB, HSL with alpha support
 - Uncontrolled and controlled modes
 - Fully customizable sizes and visibility toggles
 
@@ -20,7 +18,7 @@ Add the dependency:
 
 ```yaml
 dependencies:
-  just_color_picker: ^0.3.0
+  just_color_picker: ^0.4.0
 ```
 
 ## Usage
@@ -73,10 +71,27 @@ JustColorPicker(
   wheelWidth: 30,              // ring thickness (wheel mode)
   thumbRadius: 10,             // indicator size
   showAlpha: true,             // alpha slider
-  showHexInput: true,          // HEX text field
-  showColorInfo: true,         // HEX/RGB display
-  showPreview: true,           // color swatch
 )
+```
+
+### Color Conversion Utilities
+
+```dart
+// HEX
+final hex = colorToHex(color);                        // "FF5733"
+final hexAlpha = colorToHex(color, includeAlpha: true); // "80FF5733"
+final color = hexToColor('#FF5733');
+final valid = isValidHex('#FF5733');
+
+// RGB
+final rgb = colorToRgb(color);   // (r: 255, g: 87, b: 51, a: 255)
+final color = rgbToColor(255, 87, 51);
+final color = rgbToColor(255, 87, 51, 128); // with alpha
+
+// HSL
+final hsl = colorToHsl(color);   // (h: 11.0, s: 100.0, l: 60.0, a: 255)
+final color = hslToColor(11, 100, 60);
+final color = hslToColor(11, 100, 60, 128); // with alpha
 ```
 
 ## Picker Types
@@ -103,20 +118,7 @@ Square SV panel on top with a horizontal hue bar below it. Compact linear layout
 | `wheelDiameter` | `double` | `280.0` | Wheel diameter / SV panel size |
 | `wheelWidth` | `double` | `26.0` | Ring thickness (wheel mode only) |
 | `showAlpha` | `bool` | `true` | Show alpha slider |
-| `showHexInput` | `bool` | `true` | Show HEX input |
-| `showColorInfo` | `bool` | `true` | Show color info |
-| `showPreview` | `bool` | `true` | Show preview swatch |
-| `showRgbInput` | `bool` | `false` | Show RGB input fields |
-| `showHslInput` | `bool` | `false` | Show HSL input fields |
 | `thumbRadius` | `double` | `8.0` | Thumb indicator radius |
-| `inputTheme` | `ColorPickerInputThemeData?` | `null` | Theme for all input fields |
-
-### ColorPickerType
-
-| Value | Description |
-|-------|-------------|
-| `wheel` | Circular hue ring with embedded SV panel (default) |
-| `bar` | Horizontal hue bar with square SV panel |
 
 ### Standalone Widgets
 
@@ -128,12 +130,18 @@ These widgets are also exported for custom layouts:
 | `HueBar` | Horizontal hue spectrum slider |
 | `SvPanel` | Saturation-value rectangle |
 | `AlphaSlider` | Opacity slider with checkerboard background |
-| `HexInput` | HEX color code text field |
-| `RgbInput` | R/G/B/A individual input fields (0–255) |
-| `HslInput` | H/S/L/A individual input fields |
-| `ColorTextField` | Reusable base input component |
-| `ColorPreview` | Color swatch with checkerboard background |
-| `ColorInfoPanel` | HEX / RGB / HSL value display |
+
+### Conversion Utilities
+
+| Function | Description |
+|----------|-------------|
+| `colorToHex(Color, {includeAlpha})` | Color → `"FF5733"` |
+| `hexToColor(String)` | `"#FF5733"` → Color? |
+| `isValidHex(String)` | HEX string validation |
+| `colorToRgb(Color)` | Color → `({int r, int g, int b, int a})` |
+| `rgbToColor(int r, int g, int b, [int a])` | RGB → Color |
+| `colorToHsl(Color)` | Color → `({double h, double s, double l, int a})` |
+| `hslToColor(double h, double s, double l, [int a])` | HSL → Color |
 
 ## Example
 

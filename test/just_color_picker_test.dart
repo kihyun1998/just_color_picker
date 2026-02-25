@@ -53,29 +53,6 @@ void main() {
     });
   });
 
-  group('ColorFormat', () {
-    test('HexColorFormat without alpha', () {
-      const fmt = HexColorFormat();
-      expect(fmt.format(const Color(0xFFFF5733)), '#FF5733');
-    });
-
-    test('HexColorFormat with alpha', () {
-      const fmt = HexColorFormat(includeAlpha: true);
-      expect(fmt.format(const Color(0x80FF5733)), '#80FF5733');
-    });
-
-    test('RgbColorFormat without alpha', () {
-      const fmt = RgbColorFormat();
-      expect(fmt.format(const Color(0xFFFF5733)), 'rgb(255, 87, 51)');
-    });
-
-    test('RgbColorFormat with alpha', () {
-      const fmt = RgbColorFormat(includeAlpha: true);
-      final result = fmt.format(const Color(0x80FF5733));
-      expect(result, startsWith('rgba(255, 87, 51,'));
-    });
-  });
-
   group('color_conversions', () {
     test('hexToColor parses 6-digit hex', () {
       final color = hexToColor('#FF5733');
@@ -121,6 +98,57 @@ void main() {
       expect(isValidHex('ABC'), isTrue);
       expect(isValidHex('ZZZZZZ'), isFalse);
     });
+
+    test('colorToRgb', () {
+      final rgb = colorToRgb(const Color(0xFFFF5733));
+      expect(rgb.r, 255);
+      expect(rgb.g, 87);
+      expect(rgb.b, 51);
+      expect(rgb.a, 255);
+    });
+
+    test('colorToRgb with alpha', () {
+      final rgb = colorToRgb(const Color(0x80FF5733));
+      expect(rgb.r, 255);
+      expect(rgb.g, 87);
+      expect(rgb.b, 51);
+      expect(rgb.a, 128);
+    });
+
+    test('rgbToColor', () {
+      final color = rgbToColor(255, 87, 51);
+      expect((color.r * 255).round(), 255);
+      expect((color.g * 255).round(), 87);
+      expect((color.b * 255).round(), 51);
+      expect((color.a * 255).round(), 255);
+    });
+
+    test('rgbToColor with alpha', () {
+      final color = rgbToColor(255, 87, 51, 128);
+      expect((color.a * 255).round(), 128);
+    });
+
+    test('colorToHsl', () {
+      final hsl = colorToHsl(const Color(0xFFFF0000));
+      expect(hsl.h, closeTo(0, 0.5));
+      expect(hsl.s, closeTo(100, 0.5));
+      expect(hsl.l, closeTo(50, 0.5));
+      expect(hsl.a, 255);
+    });
+
+    test('colorToHsl with alpha', () {
+      final hsl = colorToHsl(const Color(0x80FF0000));
+      expect(hsl.a, 128);
+    });
+
+    test('hslToColor round-trips through colorToHsl', () {
+      const original = Color(0xFF3366CC);
+      final hsl = colorToHsl(original);
+      final result = hslToColor(hsl.h, hsl.s, hsl.l, hsl.a);
+      expect((result.r * 255).round(), closeTo((original.r * 255).round(), 1));
+      expect((result.g * 255).round(), closeTo((original.g * 255).round(), 1));
+      expect((result.b * 255).round(), closeTo((original.b * 255).round(), 1));
+    });
   });
 
   group('JustColorPicker widget', () {
@@ -143,7 +171,7 @@ void main() {
       expect(changedColor, isNull);
     });
 
-    testWidgets('renders with all options disabled', (tester) async {
+    testWidgets('renders with alpha disabled', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -151,9 +179,6 @@ void main() {
               initialColor: const Color(0xFF0000FF),
               onColorChanged: (_) {},
               showAlpha: false,
-              showHexInput: false,
-              showColorInfo: false,
-              showPreview: false,
             ),
           ),
         ),

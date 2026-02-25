@@ -60,6 +60,37 @@ String colorToHex(Color color, {bool includeAlpha = false}) {
 /// Returns `true` if [hex] is a valid HEX color string.
 bool isValidHex(String hex) => hexToColor(hex) != null;
 
+/// Converts a [Color] to RGB components (0–255).
+///
+/// Returns a record with:
+/// - `r`: red, 0–255
+/// - `g`: green, 0–255
+/// - `b`: blue, 0–255
+/// - `a`: alpha, 0–255
+({int r, int g, int b, int a}) colorToRgb(Color color) {
+  return (
+    r: (color.r * 255.0).round() & 0xff,
+    g: (color.g * 255.0).round() & 0xff,
+    b: (color.b * 255.0).round() & 0xff,
+    a: (color.a * 255.0).round() & 0xff,
+  );
+}
+
+/// Converts RGB components to a [Color].
+///
+/// - [r]: red, 0–255
+/// - [g]: green, 0–255
+/// - [b]: blue, 0–255
+/// - [a]: alpha, 0–255 (default 255 = fully opaque)
+Color rgbToColor(int r, int g, int b, [int a = 255]) {
+  return Color.from(
+    alpha: a / 255.0,
+    red: r / 255.0,
+    green: g / 255.0,
+    blue: b / 255.0,
+  );
+}
+
 /// Converts HSL values to a [Color].
 ///
 /// - [h]: hue, 0–360
@@ -101,7 +132,8 @@ Color hslToColor(double h, double s, double l, [int alpha = 255]) {
 /// - `h`: hue, 0–360
 /// - `s`: saturation, 0–100
 /// - `l`: lightness, 0–100
-({double h, double s, double l}) colorToHsl(Color color) {
+/// - `a`: alpha, 0–255
+({double h, double s, double l, int a}) colorToHsl(Color color) {
   final r = color.r;
   final g = color.g;
   final b = color.b;
@@ -128,5 +160,5 @@ Color hslToColor(double h, double s, double l, [int alpha = 255]) {
     }
   }
 
-  return (h: h, s: s * 100, l: l * 100);
+  return (h: h, s: s * 100, l: l * 100, a: (color.a * 255.0).round() & 0xff);
 }
