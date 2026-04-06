@@ -120,6 +120,23 @@ Square SV panel on top with a horizontal hue bar below it. Compact linear layout
 | `showAlpha` | `bool` | `true` | Show alpha slider |
 | `thumbRadius` | `double` | `8.0` | Thumb indicator radius |
 
+### ColorState
+
+| Property / Method | Type | Description |
+|-------------------|------|-------------|
+| `ColorState.fromColor(Color)` | factory | Create from a Flutter Color |
+| `ColorState.fromHSV(HSVColor)` | factory | Create from an HSVColor |
+| `ColorState.fromAHSV(a, h, s, v)` | factory | Create from individual components |
+| `hue` | `double` | Hue (0–360) |
+| `saturation` | `double` | Saturation (0–1) |
+| `value` | `double` | Value / brightness (0–1) |
+| `alpha` | `double` | Alpha (0–1) |
+| `hsv` | `HSVColor` | Underlying HSVColor |
+| `toColor()` | `Color` | Convert to Flutter Color |
+| `withHue(double)` | `ColorState` | Copy with new hue |
+| `withSV(double, double)` | `ColorState` | Copy with new saturation & value |
+| `withAlpha(double)` | `ColorState` | Copy with new alpha |
+
 ### Standalone Widgets
 
 These widgets are also exported for custom layouts:
@@ -131,12 +148,36 @@ These widgets are also exported for custom layouts:
 | `SvPanel` | Saturation-value rectangle |
 | `AlphaSlider` | Opacity slider with checkerboard background |
 
+### ColorState
+
+Immutable wrapper around `HSVColor` with convenience methods for color manipulation.
+
+```dart
+// Create from a Color or HSV components
+final state = ColorState.fromColor(Colors.blue);
+final state = ColorState.fromHSV(myHsvColor);
+final state = ColorState.fromAHSV(1.0, 210, 0.8, 0.9);
+
+// Read components
+state.hue;        // 0–360
+state.saturation;  // 0–1
+state.value;       // 0–1
+state.alpha;       // 0–1
+state.hsv;         // underlying HSVColor
+
+// Immutable updates
+final updated = state.withHue(120).withSV(0.5, 0.8).withAlpha(0.9);
+
+// Convert back to Color
+final color = state.toColor();
+```
+
 ### Conversion Utilities
 
 | Function | Description |
 |----------|-------------|
 | `colorToHex(Color, {includeAlpha})` | Color → `"FF5733"` |
-| `hexToColor(String)` | `"#FF5733"` → Color? |
+| `hexToColor(String)` | `"#RGB"` / `"#RRGGBB"` / `"#AARRGGBB"` → Color? |
 | `isValidHex(String)` | HEX string validation |
 | `colorToRgb(Color)` | Color → `({int r, int g, int b, int a})` |
 | `rgbToColor(int r, int g, int b, [int a])` | RGB → Color |
