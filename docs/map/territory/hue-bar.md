@@ -29,4 +29,4 @@ From reading the source only:
 - [picker-composition](picker-composition.md) — it sizes this bar's box.
 
 ## Known holes / open
-- Right edge jumps left: at `dx >= width` the bar emits `360`, `ColorState::withHue` wraps it to `0`, and `HueBarPainter` draws the thumb at the left edge. CHANGELOG 0.2.0 lists this as fixed, but `withHue` is unchanged since `4ef5313` and nothing in the bar avoids `360`. Read from the code, not run; the maintainer did not know it (maintainer, 2026-10-25).
+- Right edge jumps left: at `dx >= width` the bar emits `360`, `ColorState::withHue` wraps it to `0`, and `HueBarPainter` draws the thumb at the left edge. CHANGELOG 0.2.0 lists this as fixed, but `withHue` is unchanged since `4ef5313` and nothing in the bar avoids `360`. Read from the code, not run; the maintainer did not know it (maintainer, 2026-10-25). Tracked: #3

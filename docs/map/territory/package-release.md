@@ -27,4 +27,4 @@ From reading the files:
 
 ## Known holes / open
 - Dependabot is specified and not built. Tracked: #1.
-- No CI runs the tests or `flutter analyze`.
+- No CI runs the tests or `flutter analyze`. Tracked: #6

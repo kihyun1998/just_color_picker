@@ -33,6 +33,6 @@ From reading the source only:
 - [example-playground](example-playground.md) — it drives every parameter.
 
 ## Known holes / open
-- Controlled mode loses hue: when the parent echoes the emitted color back, `didUpdateWidget` rebuilds from a `Color`, and at saturation 0 or value 0 the hue resets to 0, so the ring thumb jumps to red. Not intended (maintainer, 2026-10-25).
-- Controlled mode is not strict: `_updateState` moves the local state even when the parent never passes a new `color`. Not intended (maintainer, 2026-10-25).
+- Controlled mode loses hue: when the parent echoes the emitted color back, `didUpdateWidget` rebuilds from a `Color`, and at saturation 0 or value 0 the hue resets to 0, so the ring thumb jumps to red. Not intended (maintainer, 2026-10-25). Tracked: #4
+- Controlled mode is not strict: `_updateState` moves the local state even when the parent never passes a new `color`. Not intended (maintainer, 2026-10-25). Tracked: #5
 - No widget test drives a gesture or a controlled-mode echo.
