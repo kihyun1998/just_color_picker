@@ -2,17 +2,11 @@
 
 ## Agent skills
 
-### Issue tracker
-
-Issues are tracked in GitHub Issues for `kihyun1998/just_color_picker`. See `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Single-context: one `GLOSSARY.md` and `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+| Before you… | Read |
+|---|---|
+| create, read, comment on, label or close an issue | `docs/agents/issue-tracker.md` |
+| apply a triage label | `docs/agents/triage-labels.md` |
+| name a domain concept, or work in an area an ADR may cover | `docs/agents/domain.md` |
 
 ## Comments
 
