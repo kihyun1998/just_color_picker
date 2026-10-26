@@ -1,0 +1,53 @@
+# Analyze and test the package and example/ at the Flutter floor that
+# pubspec.yaml's SDK constraint implies, and at the latest stable.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: ${{ matrix.label }} (Flutter ${{ matrix.flutter || 'stable' }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: minimum
+            flutter: 3.35.3
+          - label: stable
+            flutter: ''
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ matrix.flutter }}
+          cache: true
+
+      - run: flutter --version
+
+      - name: Package — pub get
+        run: flutter pub get
+
+      - name: Package — analyze
+        run: flutter analyze
+
+      - name: Package — test
+        run: flutter test
+
+      - name: Example — pub get
+        working-directory: example
+        run: flutter pub get
+
+      - name: Example — analyze
+        working-directory: example
+        run: flutter analyze
+
+      - name: Example — test
+        working-directory: example
+        run: flutter test
