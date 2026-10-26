@@ -1,4 +1,4 @@
-## Unreleased
+## 0.5.0
 
 - **BREAKING**: Controlled mode is strict. With `color` set, the picker shows only `color`; a drag calls `onColorChanged` and the picker moves when the parent passes the color back. A parent that rejects or snaps a change is now respected. **Migration**: a parent that sets `color` but does not rebuild on `onColorChanged` (for example a dialog without `setState`) should use `initialColor` instead. Its picker otherwise no longer moves.
 - **fix**: `onColorChangeEnd` reports the color the drag ended on.

@@ -18,7 +18,7 @@ Add the dependency:
 
 ```yaml
 dependencies:
-  just_color_picker: ^0.4.0
+  just_color_picker: ^0.5.0
 ```
 
 ## Usage
