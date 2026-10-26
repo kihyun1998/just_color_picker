@@ -186,5 +186,66 @@ void main() {
 
       expect(find.byType(JustColorPicker), findsOneWidget);
     });
+
+    testWidgets(
+      'bar keeps the hue thumb at the right edge when dragged past it',
+      (tester) async {
+        final changed = <Color>[];
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: Center(
+                child: JustColorPicker(
+                  type: ColorPickerType.bar,
+                  initialColor: const Color(0xFF00FFFF),
+                  onColorChanged: changed.add,
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final bar = find.byType(HueBar);
+        final rect = tester.getRect(bar);
+        await tester.dragFrom(rect.center, Offset(rect.width, 0));
+        await tester.pump();
+
+        expect(tester.widget<HueBar>(bar).hue, greaterThan(359.0));
+        expect(changed.last, const Color(0xFFFF0000));
+      },
+    );
+  });
+
+  group('HueBar', () {
+    Future<List<double>> dragAcross(WidgetTester tester, double dx) async {
+      final emitted = <double>[];
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Center(
+            child: SizedBox(
+              width: 200,
+              child: HueBar(hue: 180, thumbRadius: 8, onChanged: emitted.add),
+            ),
+          ),
+        ),
+      );
+      final rect = tester.getRect(find.byType(HueBar));
+      await tester.dragFrom(rect.center, Offset(dx, 0));
+      return emitted;
+    }
+
+    testWidgets('emits a hue below 360 when dragged past the right edge', (
+      tester,
+    ) async {
+      final emitted = await dragAcross(tester, 300);
+      expect(emitted, everyElement(lessThan(360.0)));
+      expect(emitted.last, greaterThan(359.0));
+    });
+
+    testWidgets('emits 0 when dragged past the left edge', (tester) async {
+      final emitted = await dragAcross(tester, -300);
+      expect(emitted.last, 0.0);
+    });
   });
 }

@@ -13,10 +13,11 @@ Each pair is written twice, in a widget and a painter that share no helper. Chan
 - [alpha-slider](../territory/alpha-slider.md) — `AlphaSlider::_handleDrag` (`x / w`) against `AlphaSliderPainter::paint` (`alpha * w`).
 
 ## What a violation looks like
-The thumb drifts away from the finger during a drag, or the selected colour is not the one under the thumb. The hue bar's right edge is one already: the drag maps to 360, `withHue` wraps it to 0, and the painter draws 0 at the left ([hue-bar](../territory/hue-bar.md#known-holes--open)).
+The thumb drifts away from the finger during a drag, or the selected colour is not the one under the thumb. The hue bar's right edge was one until #3: the drag mapped to 360, `withHue` wrapped it to 0, and the painter drew 0 at the left. A wrap between the two mappings breaks the inverse at the seam, so the bar now stops just short of 360 ([hue-bar](../territory/hue-bar.md#design-model)).
 
 ## Discovery history
 - Read from the source at `fae37bc` (2026-10-25): four handler and painter pairs with matching formulas and no shared function.
+- #3 (2026-10-26): the hue bar's right edge, broken by the `% 360` wrap in `ColorState.withHue`. The widget tests `bar keeps the hue thumb at the right edge when dragged past it` and `HueBar emits a hue below 360 …` lock it in.
 
 ## Where it will recur
 If a widget turns a pointer position into a colour component and a painter draws that component's thumb, the two formulas are subject to this, and so is anything between them that changes the value, such as a wrap or a clamp.
