@@ -1,5 +1,7 @@
 ## Unreleased
 
+- **BREAKING**: Controlled mode is strict. With `color` set, the picker shows only `color`; a drag calls `onColorChanged` and the picker moves when the parent passes the color back. A parent that rejects or snaps a change is now respected. **Migration**: a parent that sets `color` but does not rebuild on `onColorChanged` (for example a dialog without `setState`) should use `initialColor` instead. Its picker otherwise no longer moves.
+- **fix**: `onColorChangeEnd` reports the color the drag ended on.
 - **fix**: Hue bar thumb stays at the right edge when dragged to or past it, instead of jumping to the left edge. `HueBar.onChanged` now emits a hue in `[0, 360)`: the right edge gives a value just below 360 (still red) rather than `360`. The 0.2.0 entry for this fix did not resolve it.
 - **fix**: Controlled mode keeps the hue when the parent echoes the emitted color back, including at saturation 0 and value 0 (and keeps saturation at value 0). A `color` equal to the picker's current color no longer rebuilds its HSV state; any other `color` still does.
 

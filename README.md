@@ -60,6 +60,10 @@ JustColorPicker(
 )
 ```
 
+The picker shows `color` and nothing else. A drag proposes a color through `onColorChanged`, and the picker moves only when you pass a color back. To reject a change, keep `color` as it is. To constrain it, for example by snapping to a palette, pass back the adjusted color. Hue and saturation survive grey and black as long as you pass the proposed color back unchanged.
+
+If you only need the final value and do not rebuild on every change (for example in a dialog), use `initialColor` instead.
+
 ### Customization
 
 ```dart

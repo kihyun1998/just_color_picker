@@ -66,7 +66,16 @@ class JustColorPicker extends StatefulWidget {
 }
 
 class _JustColorPickerState extends State<JustColorPicker> {
+  /// The color the picker shows.
   late ColorState _state;
+
+  /// In controlled mode, the last emitted state the parent has not yet
+  /// passed back as [JustColorPicker.color].
+  ColorState? _candidate;
+
+  /// The last state emitted through [JustColorPicker.onColorChanged] during
+  /// the current drag.
+  ColorState? _lastEmitted;
 
   bool get _isControlled => widget.color != null;
 
@@ -81,21 +90,31 @@ class _JustColorPickerState extends State<JustColorPicker> {
   @override
   void didUpdateWidget(JustColorPicker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (_isControlled &&
-        widget.color != oldWidget.color &&
-        widget.color != null &&
-        widget.color != _state.toColor()) {
-      _state = ColorState.fromColor(widget.color!);
+    final color = widget.color;
+    if (color == null) return;
+    final candidate = _candidate;
+    _candidate = null;
+    if (candidate != null && color == candidate.toColor()) {
+      _state = candidate;
+    } else if (color != _state.toColor()) {
+      _state = ColorState.fromColor(color);
     }
   }
 
   void _updateState(ColorState newState) {
-    setState(() => _state = newState);
+    if (!_isControlled || newState.toColor() == _state.toColor()) {
+      _candidate = null;
+      setState(() => _state = newState);
+    } else {
+      _candidate = newState;
+    }
+    _lastEmitted = newState;
     widget.onColorChanged(newState.toColor());
   }
 
   void _notifyEnd() {
-    widget.onColorChangeEnd?.call(_state.toColor());
+    widget.onColorChangeEnd?.call((_lastEmitted ?? _state).toColor());
+    _lastEmitted = null;
   }
 
   Widget _buildWheel() {
