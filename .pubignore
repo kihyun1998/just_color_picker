@@ -1,0 +1,32 @@
+# Files left out of the published package. Pub reads this file in place of
+# the root .gitignore, so every root .gitignore entry is repeated here.
+
+# From .gitignore: miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# From .gitignore: IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# From .gitignore: Flutter/Dart/Pub
+/pubspec.lock
+**/doc/api/
+.dart_tool/
+.flutter-plugins-dependencies
+/build/
+/coverage/
+
+# Repository docs for maintainers and agents
+docs/
+CLAUDE.md
