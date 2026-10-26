@@ -1,4 +1,4 @@
-# Pub constraint updates for the package root and example/.
+# Pub constraint updates for the package root and example/, and the workflows' actions.
 version: 2
 updates:
   - package-ecosystem: pub
@@ -14,6 +14,15 @@ updates:
       interval: weekly
     groups:
       example:
+        patterns: ["*"]
+    labels:
+      - needs-triage
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
         patterns: ["*"]
     labels:
       - needs-triage

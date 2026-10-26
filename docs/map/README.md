@@ -16,7 +16,7 @@ The map cannot answer for source files or issues as nodes: they are text inside 
 
 ## The repo
 
-A Flutter package with no non-SDK runtime dependency. One immutable HSV `ColorState` is the only store. Four controls each turn a drag into one component and paint it back. `JustColorPicker` composes them as `wheel` or `bar`. Pure functions convert colours to and from HEX, RGB and HSL. The largest gap is testing: no test drives a gesture, and no CI runs the tests (see [package-release](territory/package-release.md)).
+A Flutter package with no non-SDK runtime dependency. One immutable HSV `ColorState` is the only store. Four controls each turn a drag into one component and paint it back. `JustColorPicker` composes them as `wheel` or `bar`. Pure functions convert colours to and from HEX, RGB and HSL. CI runs the tests on the Flutter floor and on stable (see [package-release](territory/package-release.md)). No test drives the wheel or the alpha slider.
 
 ## Territories
 
@@ -39,4 +39,4 @@ A Flutter package with no non-SDK runtime dependency. One immutable HSV `ColorSt
 
 ## Scope
 
-Covers `lib/`, `test/`, `example/`, the release files at the root, and `.github/` (Dependabot, and CI once it exists, belong to [package-release](territory/package-release.md)). Out of scope: `docs/agents/`, `CLAUDE.md` and `.metadata`, which configure tools rather than the package. A territory appears when something in the repo commits to it, such as code, a decision record or an open issue with a design. A missing note means nothing does yet.
+Covers `lib/`, `test/`, `example/`, the release files at the root, and `.github/` (Dependabot and CI belong to [package-release](territory/package-release.md)). Out of scope: `docs/agents/`, `CLAUDE.md` and `.metadata`, which configure tools rather than the package. A territory appears when something in the repo commits to it, such as code, a decision record or an open issue with a design. A missing note means nothing does yet.
