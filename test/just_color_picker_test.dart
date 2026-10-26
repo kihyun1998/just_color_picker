@@ -315,6 +315,134 @@ void main() {
       expect(panel.saturation, 0.0);
       expect(panel.value, closeTo(0.5, 0.01));
     });
+
+    /// Pumps a bar picker whose parent never rebuilds: `color` stays [start].
+    Future<void> pumpStill(
+      WidgetTester tester,
+      Color start, {
+      ValueChanged<Color>? onChanged,
+      ValueChanged<Color>? onEnd,
+    }) {
+      return tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: JustColorPicker(
+                type: ColorPickerType.bar,
+                color: start,
+                onColorChanged: onChanged ?? (_) {},
+                onColorChangeEnd: onEnd,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    Future<void> dragHueTo(WidgetTester tester, double hue) async {
+      final rect = tester.getRect(find.byType(HueBar));
+      final to = Offset(rect.left + rect.width * hue / 360, rect.center.dy);
+      await tester.dragFrom(rect.center, to - rect.center);
+      await tester.pump();
+    }
+
+    double barHue(WidgetTester tester) =>
+        tester.widget<HueBar>(find.byType(HueBar)).hue;
+
+    testWidgets('shows the parent color when the parent ignores a drag', (
+      tester,
+    ) async {
+      final changed = <Color>[];
+      await pumpStill(tester, blue, onChanged: changed.add);
+
+      await dragHueTo(tester, 120);
+      expect(HSVColor.fromColor(changed.last).hue, closeTo(120, 1.5));
+      await dragSv(tester, (0.8, 0.8), (0.2, 0.3));
+
+      expect(barHue(tester), closeTo(200, 0.5));
+      final panel = svPanel(tester);
+      expect(panel.saturation, closeTo(0.8, 0.01));
+      expect(panel.value, closeTo(0.8, 0.01));
+      expect(tester.widget<AlphaSlider>(find.byType(AlphaSlider)).color, blue);
+    });
+
+    testWidgets('shows the snapped color when the parent snaps to a palette', (
+      tester,
+    ) async {
+      const red = Color(0xFFFF0000);
+      var color = blue;
+      Color snap(Color c) {
+        final hue = HSVColor.fromColor(c).hue;
+        return (hue - 200).abs() < 100 ? blue : red;
+      }
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: StatefulBuilder(
+                builder: (context, setState) => JustColorPicker(
+                  type: ColorPickerType.bar,
+                  showAlpha: false,
+                  color: color,
+                  onColorChanged: (c) => setState(() => color = snap(c)),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final rect = tester.getRect(find.byType(HueBar));
+      Offset atHue(double h) =>
+          Offset(rect.left + rect.width * h / 360, rect.center.dy);
+      final gesture = await tester.startGesture(atHue(200));
+      await tester.pump();
+      for (final hue in [160.0, 120.0, 90.0, 60.0, 30.0]) {
+        await gesture.moveTo(atHue(hue));
+        await tester.pump();
+        expect(
+          barHue(tester),
+          closeTo(HSVColor.fromColor(color).hue, 0.5),
+          reason: 'finger at hue $hue',
+        );
+      }
+      await gesture.up();
+    });
+
+    testWidgets('moves the hue in grey when the parent never rebuilds', (
+      tester,
+    ) async {
+      await pumpStill(tester, const Color(0xFF808080));
+
+      await dragHueTo(tester, 120);
+
+      expect(barHue(tester), closeTo(120, 1.5));
+      expect(svPanel(tester).saturation, 0.0);
+    });
+
+    testWidgets(
+      'moves the saturation in black when the parent never rebuilds',
+      (tester) async {
+        await pumpStill(tester, const Color(0xFF000000));
+
+        await dragSv(tester, (0.2, 0.05), (0.9, -0.2));
+
+        final panel = svPanel(tester);
+        expect(panel.value, 0.0);
+        expect(panel.saturation, closeTo(0.9, 0.01));
+      },
+    );
+
+    testWidgets('reports the dragged color on change end', (tester) async {
+      final ended = <Color>[];
+      await pumpStill(tester, blue, onEnd: ended.add);
+
+      await dragHueTo(tester, 120);
+
+      expect(ended, hasLength(1));
+      expect(HSVColor.fromColor(ended.single).hue, closeTo(120, 1.5));
+    });
   });
 
   group('HueBar', () {
