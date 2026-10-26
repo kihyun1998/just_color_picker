@@ -11,7 +11,7 @@ updates:
   - package-ecosystem: pub
     directory: /example
     schedule:
-      interval: monthly
+      interval: weekly
     groups:
       example:
         patterns: ["*"]
