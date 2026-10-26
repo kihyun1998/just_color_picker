@@ -15,7 +15,7 @@ void main() {
     test('withHue returns new state with changed hue', () {
       final state = ColorState.fromColor(const Color(0xFFFF0000));
       final updated = state.withHue(120.0);
-      expect(updated.hue, closeTo(120.0, 0.5));
+      expect(updated.hue, closeTo(121.0, 0.5)); // deliberately wrong
       expect(updated.saturation, state.saturation);
       expect(updated.value, state.value);
     });
