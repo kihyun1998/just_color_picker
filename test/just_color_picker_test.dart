@@ -216,6 +216,107 @@ void main() {
     );
   });
 
+  group('JustColorPicker controlled mode', () {
+    // HSV(200, 0.8, 0.8).
+    const blue = Color(0xFF2996CC);
+
+    /// Pumps a bar picker whose parent echoes every emitted color back as
+    /// `color`, and returns a setter for the parent's color.
+    Future<void Function(Color)> pumpEchoing(WidgetTester tester) async {
+      var color = blue;
+      late StateSetter setParent;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: StatefulBuilder(
+                builder: (context, setState) {
+                  setParent = setState;
+                  return JustColorPicker(
+                    type: ColorPickerType.bar,
+                    showAlpha: false,
+                    color: color,
+                    onColorChanged: (c) => setState(() => color = c),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+      return (c) => setParent(() => color = c);
+    }
+
+    Future<void> dragSv(
+      WidgetTester tester,
+      (double, double) from,
+      (double, double) to,
+    ) async {
+      final rect = tester.getRect(find.byType(SvPanel));
+      Offset at((double, double) sv) => Offset(
+        rect.left + sv.$1 * rect.width,
+        rect.top + (1 - sv.$2) * rect.height,
+      );
+      await tester.dragFrom(at(from), at(to) - at(from));
+      await tester.pump();
+    }
+
+    SvPanel svPanel(WidgetTester tester) =>
+        tester.widget<SvPanel>(find.byType(SvPanel));
+
+    testWidgets('keeps the hue when the echoed color passes through grey', (
+      tester,
+    ) async {
+      await pumpEchoing(tester);
+
+      await dragSv(tester, (0.8, 0.8), (-0.2, 0.8));
+      expect(svPanel(tester).saturation, 0.0);
+      expect(tester.widget<HueBar>(find.byType(HueBar)).hue, closeTo(200, 0.5));
+
+      await dragSv(tester, (0.05, 0.8), (0.8, 0.8));
+      expect(svPanel(tester).hue, closeTo(200, 0.5));
+    });
+
+    testWidgets('keeps hue and saturation when the echoed color is black', (
+      tester,
+    ) async {
+      await pumpEchoing(tester);
+
+      await dragSv(tester, (0.8, 0.8), (0.8, -0.2));
+      final panel = svPanel(tester);
+      expect(panel.value, 0.0);
+      expect(panel.hue, closeTo(200, 0.5));
+      expect(panel.saturation, closeTo(0.8, 0.01));
+    });
+
+    testWidgets('follows a color the parent sets that is not an echo', (
+      tester,
+    ) async {
+      final setColor = await pumpEchoing(tester);
+
+      setColor(const Color(0xFF00FF00));
+      await tester.pump();
+
+      final panel = svPanel(tester);
+      expect(panel.hue, closeTo(120, 0.5));
+      expect(panel.saturation, closeTo(1.0, 0.01));
+      expect(panel.value, closeTo(1.0, 0.01));
+    });
+
+    testWidgets('follows a grey the parent sets that is not an echo', (
+      tester,
+    ) async {
+      final setColor = await pumpEchoing(tester);
+
+      setColor(const Color(0xFF808080));
+      await tester.pump();
+
+      final panel = svPanel(tester);
+      expect(panel.saturation, 0.0);
+      expect(panel.value, closeTo(0.5, 0.01));
+    });
+  });
+
   group('HueBar', () {
     Future<List<double>> dragAcross(WidgetTester tester, double dx) async {
       final emitted = <double>[];

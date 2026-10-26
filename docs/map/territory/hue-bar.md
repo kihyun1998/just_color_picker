@@ -29,5 +29,4 @@ From reading the source only:
 - [picker-composition](picker-composition.md) — it sizes this bar's box.
 
 ## Known holes / open
-- Controlled mode can still return the thumb to the left edge. When the parent passes red back, `didUpdateWidget` rebuilds the state with `ColorState.fromColor`, which recomputes the hue as `0`. The same root as #4 and #5: hue is not kept through a colour round trip.
 - CHANGELOG 0.2.0 lists the right-edge jump as fixed. The only change in that release was the painter's thumb-x clamp, which keeps the thumb inside the bar but did not stop the wrap. The actual fix is #3 (reproduced 2026-10-26: a drag past the edge gave hue `0`).
