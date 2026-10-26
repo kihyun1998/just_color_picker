@@ -39,4 +39,4 @@ A Flutter package with no non-SDK runtime dependency. One immutable HSV `ColorSt
 
 ## Scope
 
-Covers `lib/`, `test/`, `example/`, the release files at the root, and `.github/` once it exists (CI and Dependabot belong to [package-release](territory/package-release.md)). Out of scope: `docs/agents/`, `CLAUDE.md` and `.metadata`, which configure tools rather than the package. A territory appears when something in the repo commits to it, such as code, a decision record or an open issue with a design. A missing note means nothing does yet.
+Covers `lib/`, `test/`, `example/`, the release files at the root, and `.github/` (Dependabot, and CI once it exists, belong to [package-release](territory/package-release.md)). Out of scope: `docs/agents/`, `CLAUDE.md` and `.metadata`, which configure tools rather than the package. A territory appears when something in the repo commits to it, such as code, a decision record or an open issue with a design. A missing note means nothing does yet.
