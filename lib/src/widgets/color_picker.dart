@@ -83,7 +83,8 @@ class _JustColorPickerState extends State<JustColorPicker> {
     super.didUpdateWidget(oldWidget);
     if (_isControlled &&
         widget.color != oldWidget.color &&
-        widget.color != null) {
+        widget.color != null &&
+        widget.color != _state.toColor()) {
       _state = ColorState.fromColor(widget.color!);
     }
   }
