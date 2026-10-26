@@ -11,7 +11,7 @@ Shipping the package to pub.dev: the version, the changelog, the README a consum
 
 ## Design model
 From reading the files:
-- The version lives in `pubspec.yaml`. The README's install snippet pins it again (`just_color_picker: ^0.4.0`), and `CHANGELOG.md` heads each release; none of the three derives from another. Breaking changes are marked `**BREAKING**` in the changelog (0.4.0).
+- The version lives in `pubspec.yaml`. The README's install snippet pins it again (`just_color_picker: ^0.4.0`), and `CHANGELOG.md` heads each release; none of the three derives from another. Breaking changes are marked `**BREAKING**` in the changelog (0.4.0). Changes that have not shipped go under a `## Unreleased` heading at the top, which is renamed to the version at release. This was the maintainer's call (2026-10-26, #3), chosen over bumping to `0.4.1` per fix.
 - The only non-SDK dependency is dev `flutter_lints` (`pubspec.yaml`), which `analysis_options.yaml` includes.
 - The repo has no CI: `.github/` holds only `dependabot.yml`.
 - Dependabot watches pub in two directories (`.github/dependabot.yml`). The root runs weekly with `versioning-strategy: increase-if-necessary`, one PR per dependency. The root `pubspec.lock` is gitignored, as a library's should be, so the only thing to update is the constraint. A PR opens only when a release falls outside the caret, and at `0.x` every minor release does. Such a PR raises the floor for consumers, so each is a separate release decision. `/example` runs weekly with every dependency grouped into one PR: its `pubspec.lock` is committed, and nothing ships from it.

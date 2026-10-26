@@ -18,14 +18,17 @@ class HueBar extends StatelessWidget {
   /// Radius of the thumb indicator.
   final double thumbRadius;
 
-  /// Called when hue changes during dragging.
+  /// Called when hue changes during dragging, with a hue in `[0, 360)`.
   final ValueChanged<double> onChanged;
 
   /// Called when the drag gesture ends.
   final VoidCallback? onChangeEnd;
 
+  /// The hue emitted at the bar's right edge, just below 360.
+  static const double _maxHue = 360.0 - 1e-9;
+
   void _handleDrag(Offset local, double width) {
-    final newHue = (local.dx / width).clamp(0.0, 1.0) * 360.0;
+    final newHue = ((local.dx / width) * 360.0).clamp(0.0, _maxHue);
     onChanged(newHue);
   }
 

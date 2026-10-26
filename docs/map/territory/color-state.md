@@ -9,7 +9,7 @@ The one store of the picked color: an immutable HSV value plus alpha that every 
 ## Design model
 From reading the source only:
 - `ColorState` wraps one `HSVColor`; every `with*` returns a new instance (`color_state.dart — ColorState::withHue`, `withSV`, `withAlpha`).
-- `withHue` wraps with `hue % 360`, so `360` becomes `0`. `withSV` and `withAlpha` clamp to `0–1`. The factories (`fromHSV`, `fromColor`, `fromAHSV`) do not clamp; `HSVColor.fromAHSV` asserts its own ranges.
+- `withHue` wraps with `hue % 360`, so `360` becomes `0`. Every control that feeds it emits `[0, 360)`, so the wrap only acts on out-of-range input ([hue-bar](hue-bar.md#design-model)). `withSV` and `withAlpha` clamp to `0–1`. The factories (`fromHSV`, `fromColor`, `fromAHSV`) do not clamp; `HSVColor.fromAHSV` asserts its own ranges.
 - Equality and `hashCode` delegate to the wrapped `HSVColor`.
 - `fromColor` goes through `HSVColor.fromColor`, which cannot recover a hue for a grey (saturation 0) or for black (value 0): it returns hue 0 there.
 
@@ -25,8 +25,7 @@ From reading the source only:
 
 ## Blast radius
 - [picker-composition](picker-composition.md) — it keeps its only copy of the color here and rebuilds it with `fromColor` in controlled mode, so a change to what `fromColor` preserves changes what the picker shows after every echo.
-- [hue-bar](hue-bar.md) — the bar emits `360` at its right edge and relies on what `withHue` does with it.
+- [hue-bar](hue-bar.md) — the bar keeps its output below `360` so that `withHue`'s wrap never moves its thumb. Changing the wrap or the stored range moves that edge.
 
 ## Known holes / open
-- The `% 360` wrap turns the hue bar's right edge into hue `0` — see [hue-bar](hue-bar.md#known-holes--open).
 - Hue is lost when a `Color` round-trips at saturation 0 or value 0 — see [picker-composition](picker-composition.md#known-holes--open). Not intended (maintainer, 2026-10-25).

@@ -1,3 +1,7 @@
+## Unreleased
+
+- **fix**: Hue bar thumb stays at the right edge when dragged to or past it, instead of jumping to the left edge. `HueBar.onChanged` now emits a hue in `[0, 360)`: the right edge gives a value just below 360 (still red) rather than `360`. The 0.2.0 entry for this fix did not resolve it.
+
 ## 0.4.0
 
 - **BREAKING**: Remove input widgets (`HexInput`, `RgbInput`, `HslInput`, `ColorTextField`) — the library now provides values and utilities instead of UI inputs
